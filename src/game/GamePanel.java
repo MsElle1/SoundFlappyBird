@@ -55,7 +55,9 @@ public class GamePanel extends JPanel implements ActionListener {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_R && gameOver) restartGame();
-                if (e.getKeyCode() == KeyEvent.VK_SPACE && gameStarted && !gameOver) bird.jump();
+                if (e.getKeyCode() == KeyEvent.VK_SPACE && gameStarted && !gameOver) {
+                    bird.jump(); // Bird.jump() handles frozen countdown internally
+                }
             }
         });
 
@@ -66,10 +68,13 @@ public class GamePanel extends JPanel implements ActionListener {
                 if (!gameStarted) {
                     if (startBtn.contains(e.getPoint())) {
                         gameStarted = true;
+                        bird.activateNoGravity(); // Bird starts frozen — waits for 5 inputs
                         audio.start();
                     } else if (exitBtn.contains(e.getPoint())) {
                         System.exit(0);
                     }
+                } else if (!gameOver) {
+                    bird.jump(); // Mouse click also counts as user input
                 }
             }
             @Override
@@ -207,7 +212,7 @@ public class GamePanel extends JPanel implements ActionListener {
         g2d.fillRect(0, 0, WIDTH, HEIGHT);
         g2d.setColor(Color.WHITE);
         g2d.setFont(new Font("Arial", Font.BOLD, 80));
-        String msg = "GAME OVER" + "TRY AGAIN";
+        String msg = "GAME OVER";
         g2d.drawString(msg, WIDTH / 2 - g2d.getFontMetrics().stringWidth(msg) / 2, HEIGHT / 2 - 60);
 
         g2d.setFont(new Font("Arial", Font.PLAIN, 30));

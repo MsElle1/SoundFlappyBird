@@ -12,6 +12,10 @@ public class Pipe {
 
     public boolean isPassed = false;
     private Random random = new Random();
+    private static final int DELAY_SECONDS = 10;
+    private static final int FPS = 60;
+    private int delayTicks = DELAY_SECONDS * FPS;
+    private boolean active = false;
 
     // Colors
     private final Color PIPE_GREEN = new Color(115, 190, 46);
@@ -24,10 +28,22 @@ public class Pipe {
         // Minimum height 50, maximum height around 330 to leave room for the gap
         topHeight = random.nextInt(280) + 50;
     }
+    public Pipe(int delaySeconds) {
+        topHeight = random.nextInt(280) + 50;
+        this.delayTicks = delaySeconds * FPS;
+    }
+
 
     public void update() {
         // 3. SPEED ADJUSTMENT
-        x -= 6; // Balanced speed for 1080 width
+        if (!active) {
+            delayTicks--;
+            if (delayTicks <= 0) {
+                active = true;
+            }
+            return; // Don't move the pipe while waiting
+        }
+        x -= 5; // Balanced speed for 1080 width
 
         if (x + width < 0) {
             x = GamePanel.WIDTH;
@@ -37,6 +53,7 @@ public class Pipe {
     }
 
     public void draw(Graphics2D g2d) {
+        if(!active) return;
         drawStyledPipe(g2d, x, 0, width, topHeight, true);
         drawStyledPipe(g2d, x, topHeight + gap, width, GamePanel.HEIGHT - (topHeight + gap), false);
     }
@@ -74,11 +91,13 @@ public class Pipe {
     }
 
     public boolean collides(Bird bird) {
+        if (!active) return false;
+
         Rectangle birdRect = bird.getBounds();
         return birdRect.intersects(new Rectangle(x, 0, width, topHeight)) ||
                 birdRect.intersects(new Rectangle(x, topHeight + gap, width, GamePanel.HEIGHT));
     }
-
+    public boolean isActive() { return active; }
     public int getX() { return x; }
     public int getWidth() { return width; }
 }

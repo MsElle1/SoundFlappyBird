@@ -4,9 +4,14 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 public class Bird {
+
     // 1. POSITION & SIZE
     public double x = 150, y = 200;
     public int width = 60, height = 45; // Proportional to 566 height
+
+    // Power-up: No Gravity
+    private boolean noGravity = false;
+    private int frozenInputsRemaining = 0; // Counts down per user input (jump), not real time
 
     private double velocity = 0;
 
@@ -15,12 +20,44 @@ public class Bird {
     private final double terminalVelocity = 12.0; // Lowered from 18.0
 
     public void update() {
+
+        // If power is active
+        if (noGravity) {
+
+            // Stop all movement and lock position
+            velocity = 0;
+            y = frozenY; // Enforce frozen Y each frame
+
+            return;  // 🚀 IMPORTANT → skip gravity completely
+        }
+
+        // Normal physics
         velocity += gravity;
-        if (velocity > terminalVelocity) velocity = terminalVelocity;
+
+        if (velocity > terminalVelocity) {
+            velocity = terminalVelocity;
+        }
+
         y += velocity;
+    }
+    // Stores Y position when power-up is activated so bird stays frozen in place
+    private double frozenY = 0;
+
+    public void activateNoGravity() {
+        noGravity = true;
+        frozenY = y;               // Lock current Y position
+        frozenInputsRemaining = 3; // Freeze lasts for 5 user inputs (jumps)
     }
 
     public void jump() {
+        if (noGravity) {
+            // Each jump attempt counts as 1 input toward the 10-input limit
+            frozenInputsRemaining--;
+            if (frozenInputsRemaining <= 0) {
+                noGravity = false; // Unfreeze after 10 inputs
+            }
+            return; // Still don't actually jump while frozen
+        }
         velocity = -9.0; // Lowered from -14.0 for more control
     }
 

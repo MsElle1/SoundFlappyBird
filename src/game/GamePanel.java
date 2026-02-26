@@ -55,7 +55,9 @@ public class GamePanel extends JPanel implements ActionListener {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_R && gameOver) restartGame();
-                if (e.getKeyCode() == KeyEvent.VK_SPACE && gameStarted && !gameOver) bird.jump();
+                if (e.getKeyCode() == KeyEvent.VK_SPACE && gameStarted && !gameOver) {
+                    bird.jump(); // Bird.jump() handles frozen countdown internally
+                }
             }
         });
 
@@ -66,10 +68,13 @@ public class GamePanel extends JPanel implements ActionListener {
                 if (!gameStarted) {
                     if (startBtn.contains(e.getPoint())) {
                         gameStarted = true;
+                        bird.activateNoGravity(); // Bird starts frozen — waits for 5 inputs
                         audio.start();
                     } else if (exitBtn.contains(e.getPoint())) {
                         System.exit(0);
                     }
+                } else if (!gameOver) {
+                    bird.jump(); // Mouse click also counts as user input
                 }
             }
             @Override

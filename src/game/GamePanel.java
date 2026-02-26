@@ -120,9 +120,9 @@ public class GamePanel extends JPanel implements ActionListener {
         pipe = new Pipe();
         score = 0;
         gameOver = false;
+        bird.activateNoGravity(); // ← ADD THIS
         audio.start();
     }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

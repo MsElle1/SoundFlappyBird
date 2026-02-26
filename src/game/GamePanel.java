@@ -207,7 +207,7 @@ public class GamePanel extends JPanel implements ActionListener {
         g2d.fillRect(0, 0, WIDTH, HEIGHT);
         g2d.setColor(Color.WHITE);
         g2d.setFont(new Font("Arial", Font.BOLD, 80));
-        String msg = "GAME OVER";
+        String msg = "GAME OVER" + "TRY AGAIN";
         g2d.drawString(msg, WIDTH / 2 - g2d.getFontMetrics().stringWidth(msg) / 2, HEIGHT / 2 - 60);
 
         g2d.setFont(new Font("Arial", Font.PLAIN, 30));
